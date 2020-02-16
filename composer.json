@@ -1,5 +1,5 @@
 {
-    "name": "vimac/my-spot",
+    "name": "vimac/myspot",
     "type": "library",
     "description": "A simple PHP persistence framework based on PDO with sql map support",
     "keywords": [
