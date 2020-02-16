@@ -1,0 +1,42 @@
+{
+    "name": "vimac/my-spot",
+    "type": "library",
+    "description": "A simple PHP persistence framework based on PDO with sql map support",
+    "keywords": [
+        "myspot",
+        "mysql",
+        "sqlmap",
+        "mybatis"
+    ],
+    "homepage": "https://github.com/vimac/spot",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "vimac",
+            "email": "vifix.mac@gmail.com",
+            "homepage": "https://vifix.cn/"
+        }
+    ],
+    "scripts": {
+        "test": "phpunit --no-configuration tests"
+    },
+    "require": {
+        "php": ">=7.3",
+        "ext-json": "*",
+        "ext-pdo": "*",
+        "psr/log": "^1.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": ">=8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "MySpot\\": "src/MySpot"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MySpotTests\\": "tests/MySpotTests"
+        }
+    }
+}
