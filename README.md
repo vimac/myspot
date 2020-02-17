@@ -128,6 +128,9 @@ return [
 ];
 ```
 
+
+##### Special Syntax
+
 MySpot implements a syntax parser to compile its special syntax to real PDO prepared statement
 
 ##### SELECT...IN Statement
