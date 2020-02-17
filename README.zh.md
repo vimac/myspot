@@ -80,7 +80,7 @@ $sqlMapConfig->setDefaultResultMapStyle(\MySpot\SqlMapStatement::MAP_STYLE_UNDER
 $sqlMap = new SqlMap($sqlMapConfig);
 ```
 
-#### Configuration
+#### 配置
 
 配置文件应该看起来像是这样:
 
