@@ -2,4 +2,4 @@ language: php
 php:
   - '7.3'
 install: composer install -n
-script: ./vendor/phpunit/phpunit/phpunit
+script: ./vendor/phpunit/phpunit/phpunit --no-configuration tests
