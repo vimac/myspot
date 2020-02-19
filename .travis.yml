@@ -1,5 +1,10 @@
 language: php
-php:
-  - '7.3'
+matrix:
+  include:
+    - php: 7.3
+      env: ANALYSIS='true'
+before_script:
+  - composer require php-coveralls/php-coveralls:^2.1.0
 install: composer install -n
-script: ./vendor/phpunit/phpunit/phpunit --no-configuration tests
+script: ./vendor/bin/phpunit -c phpunit.xml
+after_success: vendor/bin/php-coveralls -v
