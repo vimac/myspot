@@ -1,3 +1,4 @@
 language: php
 php:
   - '7.3'
+script: phpunit --no-configuration tests
