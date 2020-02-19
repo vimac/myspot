@@ -2,6 +2,8 @@
 
 **[中文版读我 / Readme in Chinese](README.zh.md)**
 
+[![Build Status](https://travis-ci.org/vimac/myspot.svg?branch=master)](https://travis-ci.org/vimac/myspot)
+
 | [Why](#why) | [Features](#features) | [Requirements](#requirements) | [Demo Project](#demo-project) | [Installation](#installation) | [Usage](#usage) | [Tests](#tests) | [License](#license) | [About Me](#about-me) |
 
 
