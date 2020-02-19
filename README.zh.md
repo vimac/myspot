@@ -2,7 +2,7 @@
 
 **[Readme in English](README.md)**
 
-[![Build Status](https://travis-ci.org/vimac/myspot.svg?branch=master)](https://travis-ci.org/vimac/myspot)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Build Status](https://travis-ci.org/vimac/myspot.svg?branch=master)](https://travis-ci.org/vimac/myspot) [![Coverage Status](https://coveralls.io/repos/github/vimac/myspot/badge.svg?branch=master)](https://coveralls.io/github/vimac/myspot?branch=master)
 
 | [开发动机](#开发动机) | [特性](#特性) | [环境需求](#环境需求) | [演示工程](#演示工程) | [安装](#安装) | [使用](#使用) | [测试](#测试) | [许可协议](#许可协议) | [关于我](#关于我) |
 
