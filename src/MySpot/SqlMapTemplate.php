@@ -19,6 +19,8 @@ class SqlMapTemplate
     const VAR_TYPE_CONDITION = 1;
     const VAR_TYPE_SUB_IN = 2;
 
+    const GENERATED_VAR_PREFIX = 'mySpotGenerated';
+
     /**
      * An array stored variable information, format:
      * [[VARIABLE_NAME, VARIABLE_TYPE, OFFSET_START, VARIABLE_NAME_LENGTH, [SUB_START, SUB_LENGTH]], ...]
@@ -144,7 +146,7 @@ class SqlMapTemplate
                         $isParsingSubExpression = false;
 
                         $currentVar[] = $parsingSubExpressionStart;
-                        $currentVar[] = $position + 1 - $parsingSubExpressionStart;
+                        $currentVar[] = $position - $parsingSubExpressionStart;
                         unset($currentVar);
                         $parsingSubExpressionStart = -1;
                     }
@@ -177,6 +179,16 @@ class SqlMapTemplate
     }
 
     /**
+     * Get all parsed variable definitions
+     *
+     * @return array
+     */
+    public function getVariables(): array
+    {
+        return $this->variables;
+    }
+
+    /**
      * Get all parsed condition variable names from template
      *
      * @return array
@@ -193,9 +205,8 @@ class SqlMapTemplate
      */
     public function render(array $params): array
     {
-        $text = $this->text;
-        $preparedSubReplaces = [];
         $strips = [];
+        $inserts = [];
 
         foreach ($this->variables as $item) {
             list($name, $type, $offset, $length) = $item;
@@ -205,19 +216,16 @@ class SqlMapTemplate
             if ($type == self::VAR_TYPE_CONDITION) {
                 list(4 => $subOffset, 5 => $subLength) = $item;
                 if ($paramValue) {
-                    // It must be replaced in reverse order, otherwise the offset will be wrong
-                    // $strips[] = [$subOffset + $subLength - 1, $subOffset + $subLength];
-                    $text = substr_replace($text, ' ', $subOffset + $subLength - 1, 1); // strip '}'
-                    // $strips[] = [$offset, $subOffset + 1];
-                    $text = substr_replace($text, str_repeat(' ', $subOffset - $offset + 1), $offset, $subOffset - $offset + 1); // strip ':variable?{', include space
+                    /** Condition == true */
+                    $strips[] = [$offset, $subOffset];
+                    $strips[] = [$subOffset + $subLength, $subOffset + $subLength ];
                 } else {
-                    // Actually length: $length + $subLength + $subOffset - $offset - $length
-                    // $strips[] = [$offset, $subOffset + $subLength];
-                    $text = substr_replace($text, str_repeat(' ', $subLength + $subOffset - $offset), $offset, $subLength + $subOffset - $offset);
+                    /** Condition == false */
+                    $strips[] = [$offset, $subOffset + $subLength ];
                 }
             } else if ($type == self::VAR_TYPE_SUB_IN) {
                 if (empty($paramValue)) {
-                    array_unshift($preparedSubReplaces, ['', $offset, $length + 1]);
+                    $strips[] = [$offset, $offset + $length + 1];
                     continue;
                 }
                 if (isset($currentParam[1])) {
@@ -231,28 +239,51 @@ class SqlMapTemplate
                 $fragments = [];
                 $index = 0;
                 foreach ($paramValue as $subItem) {
-                    $generateName = 'mySpotGenerated' . ucfirst($name) . $index++;
+                    $generateName = self::GENERATED_VAR_PREFIX . ucfirst($name) . $index++;
                     $fragments[] = $generateName;
                     $params[$generateName] = [$subItem, $paramType];
                 }
                 unset($params[$name]);
-                array_unshift($preparedSubReplaces, [sprintf('(:%s) ', implode(', :', $fragments)), $offset, $length + 1]);
+                $strips[] = [$offset, $offset + $length];
+                $inserts[] = [$offset, '(:' . implode(', :', $fragments) . ')'];
             }
         }
-        foreach ($preparedSubReplaces as $replace) {
-            $text = substr_replace($text, ...$replace);
+
+        $rawText = $this->text;
+        $rawLength = strlen($rawText);
+        $new = '';
+
+        for ($i = 0; $i < $rawLength; $i++) {
+            foreach ($inserts as $key => $insert) {
+                list($offset, $append) = $insert;
+                if ($offset === $i) {
+                    $new .= $append;
+                    unset($inserts[$key]);
+                    break;
+                }
+            }
+            foreach ($strips as $key => $strip) {
+                list($offset, $end) = $strip;
+                if ($offset === $i) {
+                    $i = $end;
+                    unset($strips[$key]);
+                    continue 2;
+                }
+            }
+
+            $new .= $rawText[$i];
         }
 
-        $text = trim($text);
+        $new = trim($new);
 
-        list('normalVariables' => $varNames) = self::parse($text);
+        list('normalVariables' => $varNames) = self::parse($new);
         $params = array_filter($params, function ($key) use ($varNames) {
             if (in_array($key, $varNames)) {
                 return true;
             }
         }, ARRAY_FILTER_USE_KEY);
 
-        return [$text, $params];
+        return [$new, $params];
     }
 
 }
