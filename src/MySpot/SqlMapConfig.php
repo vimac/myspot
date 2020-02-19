@@ -21,6 +21,8 @@ class SqlMapConfig
 
     private $cache = [];
 
+    private $objCache = [];
+
     private $enableDebugLog;
 
     private $defaultResultMapStyle = SqlMapStatement::MAP_STYLE_DO_NOT_CONVERT;
@@ -55,11 +57,11 @@ class SqlMapConfig
      */
     public function getStatementById(string $statementId): SqlMapStatement
     {
-        $ids = explode('.', $statementId);
-
-        if (count($ids) < 1) {
-            throw new SqlMapException(sprintf('Error statement id: "%s"', $ids));
+        if (isset($this->objCache[$statementId])) {
+            return $this->objCache[$statementId];
         }
+
+        $ids = explode('.', $statementId);
 
         $statementKey = array_pop($ids);
         $notFound = [];
@@ -88,6 +90,8 @@ class SqlMapConfig
             if ($statement->getResultMapStyle() == SqlMapStatement::MAP_STYLE_FOLLOW_DEFAULT) {
                 $statement->setResultMapStyle($this->defaultResultMapStyle);
             }
+
+            $this->objCache[$statementId] = $statement;
 
             return $statement;
         }

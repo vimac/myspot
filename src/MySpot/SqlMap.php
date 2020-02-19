@@ -5,6 +5,7 @@ namespace MySpot;
 
 
 use PDO;
+use Psr\Log\LoggerInterface;
 
 class SqlMap
 {
@@ -24,7 +25,15 @@ class SqlMap
      */
     private $sqlMapConfigPath;
 
+    /**
+     * @var LoggerInterface
+     */
     private $logger;
+
+    /**
+     * @var boolean
+     */
+    private $enableDebugLog;
 
     public function __construct(SqlMapConfig $config)
     {
@@ -33,6 +42,7 @@ class SqlMap
         $this->pdo = $config->getPdo();
         $this->sqlMapConfigPath = $config->getSqlMapConfigPath();
         $this->logger = $config->getLogger();
+        $this->enableDebugLog = $config->getEnableDebugLog();
     }
 
 
@@ -55,7 +65,7 @@ class SqlMap
         $template = new SqlMapTemplate($sqlFromConfig);
         list($sql, $params) = $template->render($params);
 
-        $this->logger->debug(sprintf('select: "%s", sql: "%s"', $statementId, $sql));
+        $this->enableDebugLog && $this->logger->debug(sprintf('select: "%s", sql: "%s"', $statementId, $sql));
         $stmt = $this->pdo->prepare($sql);
 
         $this->validatePdoStatementAvailable($stmt, $sql);
@@ -97,7 +107,7 @@ class SqlMap
         $template = new SqlMapTemplate($sql);
         list($sql, $params) = $template->render($inserts);
 
-        $this->logger->debug(sprintf('insert: "%s", sql: "%s"', $statementId, $sql));
+        $this->enableDebugLog && $this->logger->debug(sprintf('insert: "%s", sql: "%s"', $statementId, $sql));
         $stmt = $this->pdo->prepare($sql);
 
         $this->validatePdoStatementAvailable($stmt, $sql);
@@ -160,7 +170,7 @@ class SqlMap
         $replacement = '(' . implode(',', $columns) . ') VALUES ' . implode(',', $valueStmts);
 
         $sql = str_ireplace('#INSERT#', $replacement, $sqlFromConfig);
-        $this->logger->debug(sprintf('insertBatch: "%s", sql: "%s"', $statementId, $sql));
+        $this->enableDebugLog && $this->logger->debug(sprintf('insertBatch: "%s", sql: "%s"', $statementId, $sql));
         $stmt = $this->pdo->prepare($sql);
 
         foreach ($params as $k => $v) {
@@ -205,7 +215,7 @@ class SqlMap
         $sqlTemplate = new SqlMapTemplate($generatedSqlTemplate);
         list($sql, $params) = $sqlTemplate->render($params);
 
-        $this->logger->debug(sprintf('update: "%s", sql: "%s"', $statementId, $sql));
+        $this->enableDebugLog && $this->logger->debug(sprintf('update: "%s", sql: "%s"', $statementId, $sql));
         $stmt = $this->pdo->prepare($sql);
 
         $this->validatePdoStatementAvailable($stmt, $sql);
@@ -235,7 +245,7 @@ class SqlMap
         $template = new SqlMapTemplate($sqlFromConfig);
         list($sql, $params) = $template->render($params);
 
-        $this->logger->debug(sprintf('delete: "%s", sql: "%s"', $statementId, $sql));
+        $this->enableDebugLog && $this->logger->debug(sprintf('delete: "%s", sql: "%s"', $statementId, $sql));
         $stmt = $this->pdo->prepare($sql);
 
         $this->validatePdoStatementAvailable($stmt, $sql);

@@ -7,4 +7,5 @@ return [
     'select_by_id' => [
         'sql' => 'SELECT * FROM `user` WHERE `id` = :id',
     ],
+    'wrong_type' => 'wrong_type'
 ];

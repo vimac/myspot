@@ -36,7 +36,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "MySpotTests\\": "tests/MySpotTests"
+            "MySpotTests\\": "tests/MySpotTests",
+            "MySpotBenchmark\\": "tests/MySpotBenchmark"
         }
     }
 }
