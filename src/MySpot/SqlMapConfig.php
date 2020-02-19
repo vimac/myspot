@@ -57,10 +57,6 @@ class SqlMapConfig
     {
         $ids = explode('.', $statementId);
 
-        if (count($ids) < 1) {
-            throw new SqlMapException(sprintf('Error statement id: "%s"', $ids));
-        }
-
         $statementKey = array_pop($ids);
         $notFound = [];
 

@@ -52,7 +52,7 @@ composer require vimac/myspot
 
 #### GUI Utility
 
-<img src="https://github.com/vimac/iCopyPaste/raw/master/snapshot.png" alt="iCopyPaste Snapshot"/>
+[![iCopyPaste Snapshot](https://github.com/vimac/iCopyPaste/raw/master/snapshot.png)](https://github.com/vimac/iCopyPaste)
 
 You can use [iCopyPaste](https://github.com/vimac/iCopyPaste) to generate variants of basic queries, configuration template, DAO code template.
 

@@ -52,9 +52,9 @@ composer require vimac/myspot
 
 #### GUI 工具
 
-<img src="https://github.com/vimac/iCopyPaste/raw/master/snapshot.png" alt="iCopyPaste Snapshot"/>
+[![iCopyPaste Snapshot](https://github.com/vimac/iCopyPaste/raw/master/snapshot.png)](https://github.com/vimac/iCopyPaste)
 
-你可以使用 [iCopyPaste](https://github.com/vimac/iCopyPaste) 来生成基本的查询, 包括增删查该, 配置文件, 和 DAO 代码模板
+你可以使用 [iCopyPaste](https://github.com/vimac/iCopyPaste) 来生成基本的查询, 包括增删查改, 配置文件, 和 DAO 代码模板
 
 下载: [iCopyPaste Release Page](https://github.com/vimac/iCopyPaste/releases)
 
