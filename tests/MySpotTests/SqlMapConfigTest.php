@@ -27,7 +27,7 @@ class SqlMapConfigTest extends BaseTestCase
     public function testParseEmptyException(string $path, PDO $pdoStub)
     {
         $sqlMapConfig = new SqlMapConfig($path, $pdoStub);
-        $this->expectExceptionMessageMatches('/empty/');
+        $this->expectExceptionMessage('empty');
         $sqlMapConfig->getStatementById("config.config_test.empty_exception_test");
     }
 

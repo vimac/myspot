@@ -225,7 +225,7 @@ class SqlMapResult
      * @return object
      * @throws ReflectionException
      */
-    private function buildObject(array $data, array $keyMap, string $targetClassName): object
+    private function buildObject(array $data, array $keyMap, string $targetClassName)
     {
         $reflectionClass = new ReflectionClass($targetClassName);
 

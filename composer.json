@@ -18,16 +18,19 @@
         }
     ],
     "scripts": {
-        "test": "phpunit --no-configuration tests"
+        "test": "phpunit -c phpunit.xml",
+        "test_without_coverage": "phpunit --no-configuration tests",
+        "bench": "phpunit --no-configuration --group bench ./tests/MySpotBenchmark/Benchmark.php",
+        "profile": "php -dxdebug.remote_autostart=1 -dxdebug.remote_enable=1 -dxdebug.profiler_enable=1 -dxdebug.profiler_output_name='cachegrind.out' -dxdebug.profiler_output_dir=`pwd` vendor/bin/phpunit --no-configuration --group profile ./tests/MySpotBenchmark/Benchmark.php"
     },
     "require": {
-        "php": ">=7.3",
+        "php": ">=7.1",
         "ext-json": "*",
         "ext-pdo": "*",
         "psr/log": "^1.1"
     },
     "require-dev": {
-        "phpunit/phpunit": ">=8.0"
+        "phpunit/phpunit": ">=7.0"
     },
     "autoload": {
         "psr-4": {
