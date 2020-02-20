@@ -56,117 +56,10 @@ class SqlMapTemplate
             'variables' => $variables,
             'normalVariables' => $normalVariables,
             'conditionVariables' => $conditionVariables
-            ) = SqlMapTemplate::parse($text);
+            ) = $this->parse($text);
         $this->variables = $variables;
         $this->parsedNormalVariables = array_unique($normalVariables);
         $this->parsedConditionVariables = array_unique($conditionVariables);
-    }
-
-    /**
-     * A simple parser implemented in a simple FSM
-     * @param string $text
-     * @return array
-     * @throws SqlMapException
-     */
-    private static function parse(string $text)
-    {
-        $isParsingVariable = false;
-        $vars = [];
-        $varNames = [];
-        $conditionNames = [];
-        $subInNames = [];
-        $parsingVarName = '';
-        $parsingVarStart = -1;
-        $isParsingSubExpression = false;
-        $parsingSubExpressionStart = -1;
-        $position = 0;
-        $templateLen = strlen($text);
-
-        $endVarParsing = function ($type = self::VAR_TYPE_NORMAL) use ($text, &$vars, &$isParsingVariable, &$parsingVarName, &$parsingVarStart, &$position, &$varNames, &$conditionNames, &$subInNames) {
-            if (empty($parsingVarName)) {
-                throw new SqlMapException(sprintf("Unexpected variable name: '%s', position: %s, template text: '%s'", $parsingVarName, $position, $text));
-            }
-            $vars[] = [$parsingVarName, $type, $parsingVarStart, $position - $parsingVarStart];
-            switch ($type) {
-                case self::VAR_TYPE_CONDITION:
-                    $conditionNames[] = $parsingVarName;
-                    break;
-                case self::VAR_TYPE_SUB_IN:
-                    $subInNames[] = $parsingVarName;
-                    break;
-                default:
-                    $varNames[] = $parsingVarName;
-                    break;
-            }
-            $parsingVarName = '';
-            $parsingVarStart = -1;
-            $isParsingVariable = false;
-        };
-
-        for (; $position < $templateLen; $position++) {
-            $char = $text[$position];
-
-            switch ($char) {
-                case ':':
-                    if ($isParsingVariable) {
-                        $endVarParsing(self::VAR_TYPE_SUB_IN);
-                        break;
-                    }
-                    $isParsingVariable = true;
-                    $parsingVarStart = $position;
-                    break;
-                case $char >= 'A' and $char <= 'Z':
-                case $char >= 'a' and $char <= 'z':
-                case $char >= '0' and $char <= '9':
-                case '_':
-                    if ($isParsingVariable) {
-                        $parsingVarName .= $char;
-                    }
-                    break;
-                case '?':
-                    if (!$isParsingVariable) {
-                        throw new SqlMapException(sprintf("Unexpected char, position: %s, template text: '%s'", $position, $text));
-                    }
-                    $endVarParsing(self::VAR_TYPE_CONDITION);
-                    $isParsingSubExpression = true;
-                    break;
-                case '{':
-                    if (!$isParsingSubExpression) {
-                        throw new SqlMapException(sprintf("Unexpected curly brace, no condition variable defined, position: %s, template text: '%s'", $position, $text));
-                    }
-                    if ($parsingSubExpressionStart != -1) {
-                        throw new SqlMapException(sprintf("Nesting condition not support yet, position: %s, template text: '%s'", $position, $text));
-                    }
-                    $index = array_key_last($vars);
-                    $currentVar = &$vars[$index];
-                    $parsingSubExpressionStart = $position;
-                    break;
-                case '}':
-                    $isParsingVariable and $endVarParsing();
-                    if ($isParsingSubExpression) {
-                        $isParsingSubExpression = false;
-
-                        $currentVar[] = $parsingSubExpressionStart;
-                        $currentVar[] = $position - $parsingSubExpressionStart;
-                        unset($currentVar);
-                        $parsingSubExpressionStart = -1;
-                    }
-                    break;
-                default:
-                    $isParsingVariable and $endVarParsing();
-            }
-
-        }
-
-        if ($isParsingVariable) {
-            $endVarParsing();
-        }
-
-        if (count($duplicates = array_intersect($varNames, $subInNames))) {
-            throw new SqlMapException(sprintf('Duplicated variable name: %s', json_encode($duplicates)));
-        }
-
-        return ['variables' => $vars, 'normalVariables' => $varNames, 'conditionVariables' => $conditionNames, 'subInVariables' => $subInNames];
     }
 
     /**
@@ -219,10 +112,10 @@ class SqlMapTemplate
                 if ($paramValue) {
                     /** Condition == true */
                     $strips[] = [$offset, $subOffset];
-                    $strips[] = [$subOffset + $subLength, $subOffset + $subLength ];
+                    $strips[] = [$subOffset + $subLength, $subOffset + $subLength];
                 } else {
                     /** Condition == false */
-                    $strips[] = [$offset, $subOffset + $subLength ];
+                    $strips[] = [$offset, $subOffset + $subLength];
                 }
             } else if ($type == self::VAR_TYPE_SUB_IN) {
                 if (empty($paramValue)) {
@@ -285,6 +178,114 @@ class SqlMapTemplate
         }, ARRAY_FILTER_USE_KEY);
 
         return [$new, $params];
+    }
+
+    /**
+     * A simple parser implemented in a simple FSM
+     * @param string $text
+     * @return array
+     * @throws SqlMapException
+     */
+    private function parse(string $text)
+    {
+        $isParsingVariable = false;
+        $vars = [];
+        $varNames = [];
+        $conditionNames = [];
+        $subInNames = [];
+        $parsingVarName = '';
+        $parsingVarStart = -1;
+        $isParsingSubExpression = false;
+        $parsingSubExpressionStart = -1;
+        $position = 0;
+        $templateLen = strlen($text);
+
+        for (; $position < $templateLen; $position++) {
+            $char = $text[$position];
+
+            switch ($char) {
+                case ':':
+                    if ($isParsingVariable) {
+                        $this->endVarParsing(self::VAR_TYPE_SUB_IN, $vars, $isParsingVariable, $parsingVarName, $parsingVarStart, $position, $varNames, $conditionNames, $subInNames);
+                        break;
+                    }
+                    $isParsingVariable = true;
+                    $parsingVarStart = $position;
+                    break;
+                case $char >= 'A' and $char <= 'Z':
+                case $char >= 'a' and $char <= 'z':
+                case $char >= '0' and $char <= '9':
+                case '_':
+                    if ($isParsingVariable) {
+                        $parsingVarName .= $char;
+                    }
+                    break;
+                case '?':
+                    if (!$isParsingVariable) {
+                        throw new SqlMapException(sprintf("Unexpected char, position: %s, template text: '%s'", $position, $text));
+                    }
+                    $this->endVarParsing(self::VAR_TYPE_CONDITION, $vars, $isParsingVariable, $parsingVarName, $parsingVarStart, $position, $varNames, $conditionNames, $subInNames);
+                    $isParsingSubExpression = true;
+                    break;
+                case '{':
+                    if (!$isParsingSubExpression) {
+                        throw new SqlMapException(sprintf("Unexpected curly brace, no condition variable defined, position: %s, template text: '%s'", $position, $text));
+                    }
+                    if ($parsingSubExpressionStart != -1) {
+                        throw new SqlMapException(sprintf("Nesting condition not support yet, position: %s, template text: '%s'", $position, $text));
+                    }
+                    $index = array_key_last($vars);
+                    $currentVar = &$vars[$index];
+                    $parsingSubExpressionStart = $position;
+                    break;
+                case '}':
+                    $isParsingVariable and $this->endVarParsing(self::VAR_TYPE_NORMAL, $vars, $isParsingVariable, $parsingVarName, $parsingVarStart, $position, $varNames, $conditionNames, $subInNames);
+                    if ($isParsingSubExpression) {
+                        $isParsingSubExpression = false;
+
+                        $currentVar[] = $parsingSubExpressionStart;
+                        $currentVar[] = $position - $parsingSubExpressionStart;
+                        unset($currentVar);
+                        $parsingSubExpressionStart = -1;
+                    }
+                    break;
+                default:
+                    $isParsingVariable and $this->endVarParsing(self::VAR_TYPE_NORMAL, $vars, $isParsingVariable, $parsingVarName, $parsingVarStart, $position, $varNames, $conditionNames, $subInNames);
+            }
+
+        }
+
+        if ($isParsingVariable) {
+            $this->endVarParsing(self::VAR_TYPE_NORMAL, $vars, $isParsingVariable, $parsingVarName, $parsingVarStart, $position, $varNames, $conditionNames, $subInNames);
+        }
+
+        if (count($duplicates = array_intersect($varNames, $subInNames))) {
+            throw new SqlMapException(sprintf('Duplicated variable name: %s', json_encode($duplicates)));
+        }
+
+        return ['variables' => $vars, 'normalVariables' => $varNames, 'conditionVariables' => $conditionNames, 'subInVariables' => $subInNames];
+    }
+
+    private function endVarParsing($type, &$vars, &$isParsingVariable, &$parsingVarName, &$parsingVarStart, &$position, &$varNames, &$conditionNames, &$subInNames)
+    {
+        if (empty($parsingVarName)) {
+            throw new SqlMapException(sprintf("Unexpected variable name: '%s', position: %s, text: %s", $parsingVarName, $position, $this->text));
+        }
+        $vars[] = [$parsingVarName, $type, $parsingVarStart, $position - $parsingVarStart];
+        switch ($type) {
+            case self::VAR_TYPE_CONDITION:
+                $conditionNames[] = $parsingVarName;
+                break;
+            case self::VAR_TYPE_SUB_IN:
+                $subInNames[] = $parsingVarName;
+                break;
+            default:
+                $varNames[] = $parsingVarName;
+                break;
+        }
+        $parsingVarName = '';
+        $parsingVarStart = -1;
+        $isParsingVariable = false;
     }
 
 }
