@@ -32,6 +32,18 @@ class SqlMapConst
     const PARAM_STR = PDO::PARAM_STR;
 
     /**
+     * Flag to denote a string uses the national character set. Available since PHP 7.2.0
+     * PARAM_STR_NATL must be combined with PARAM_STR using bitwise-OR for parameter binding.
+     */
+    // const PARAM_STR_NATL = PDO::PARAM_STR_NATL;
+
+    /**
+     * Flag to denote a string uses the regular character set. Available since PHP 7.2.0
+     * PARAM_STR_CHAR must be combined with PARAM_STR using bitwise-OR for parameter binding.
+     */
+    // const PARAM_STR_CHAR = PDO::PARAM_STR_CHAR;
+
+    /**
      * Represents the SQL large object data type.
      */
     const PARAM_LOB = PDO::PARAM_LOB;

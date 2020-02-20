@@ -2,7 +2,7 @@
 
 **[中文版读我 / Readme in Chinese](README.zh.md)**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Build Status](https://travis-ci.org/vimac/myspot.svg?branch=master)](https://travis-ci.org/vimac/myspot) [![Coverage Status](https://coveralls.io/repos/github/vimac/myspot/badge.svg?branch=master)](https://coveralls.io/github/vimac/myspot?branch=master)
+![PHP from Packagist](https://img.shields.io/packagist/php-v/vimac/myspot?color=%238593BC&logo=php) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Build Status](https://travis-ci.org/vimac/myspot.svg?branch=master)](https://travis-ci.org/vimac/myspot) [![Coverage Status](https://coveralls.io/repos/github/vimac/myspot/badge.svg?branch=master)](https://coveralls.io/github/vimac/myspot?branch=master)
 
 | [Why](#why) | [Features](#features) | [Requirements](#requirements) | [Demo Project](#demo-project) | [Installation](#installation) | [Usage](#usage) | [Tests](#tests) | [License](#license) | [About Me](#about-me) |
 
