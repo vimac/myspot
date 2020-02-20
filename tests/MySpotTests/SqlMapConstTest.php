@@ -22,8 +22,6 @@ class SqlMapConstTest extends BaseTestCase
         $this->assertEquals(SqlMapConst::PARAM_LOB, PDO::PARAM_LOB);
         $this->assertEquals(SqlMapConst::PARAM_NULL, PDO::PARAM_NULL);
         $this->assertEquals(SqlMapConst::PARAM_STMT, PDO::PARAM_STMT);
-        $this->assertEquals(SqlMapConst::PARAM_STR_CHAR, PDO::PARAM_STR_CHAR);
-        $this->assertEquals(SqlMapConst::PARAM_STR_NATL, PDO::PARAM_STR_NATL);
     }
 
 }
