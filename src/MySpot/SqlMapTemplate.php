@@ -80,6 +80,7 @@ class SqlMapTemplate
         $isParsingSubExpression = false;
         $parsingSubExpressionStart = -1;
         $position = 0;
+        $templateLen = strlen($text);
 
         $endVarParsing = function ($type = self::VAR_TYPE_NORMAL) use ($text, &$vars, &$isParsingVariable, &$parsingVarName, &$parsingVarStart, &$position, &$varNames, &$conditionNames, &$subInNames) {
             if (empty($parsingVarName)) {
@@ -102,7 +103,7 @@ class SqlMapTemplate
             $isParsingVariable = false;
         };
 
-        for (; $position < strlen($text); $position++) {
+        for (; $position < $templateLen; $position++) {
             $char = $text[$position];
 
             switch ($char) {
