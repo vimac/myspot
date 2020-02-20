@@ -1,10 +1,13 @@
 language: php
 matrix:
   include:
+    - php: 7.1
+    - php: 7.2
     - php: 7.3
       env: ANALYSIS='true'
+    - php: 7.4
 before_script:
   - composer require php-coveralls/php-coveralls:^2.1.0
-install: composer install -n
-script: ./vendor/bin/phpunit -c phpunit.xml
-after_success: vendor/bin/php-coveralls -v
+  - composer install -n
+script: if [[ "$ANALYSIS" == 'true' ]]; then composer test ; else composer test_without_coverage ; fi
+after_success: if [[ "$ANALYSIS" == 'true' ]]; then vendor/bin/php-coveralls -v ; fi
