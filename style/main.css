@@ -84,8 +84,16 @@ pre {
     width: 100%;
 }
 
+.main-container p {
+    margin: 0;
+}
+
 .main-container img {
     max-width: 100%;
+}
+
+.main-container ul {
+    line-height: 1.5em;
 }
 
 .main-container a {
