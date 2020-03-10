@@ -116,19 +116,23 @@
         });
     }
 
-    loadScript('https://cdn.bootcss.com/vue/2.6.11/vue.min.js').then(() => {
+    loadScript('https://cdn.bootcss.com/vue/2.6.11/vue.min.js').then(function () {
             // loadScript('https://cdn.bootcss.com/vue-router/3.1.3/vue-router.min.js')
             Promise.all([
                     loadScript('https://cdn.bootcss.com/vue-i18n/8.15.4/vue-i18n.min.js'),
                     loadScript('https://cdn.bootcss.com/Cookies.js/1.2.1/cookies.min.js'),
                     loadScript('https://cdn.bootcss.com/element-ui/2.13.0/index.js')
                 ])
-                .then(() => {
+                .then(function () {
                     loadScript('./scripts/main.js')
                 })
-                .catch(err => console.log(err))
+                .catch(function (err) {
+                    console.log(err)
+                })
         })
-        .catch(err => console.log(err))
+        .catch(function (err) {
+            console.log(err)
+        })
 </script>
 
 </html>

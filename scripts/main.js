@@ -21,7 +21,7 @@ var i18n = new VueI18n({
     locale: 'cn',
     fallbackLocale: 'en',
     formatFallbackMessages: true,
-    messages
+    messages: messages
 })
 
 Vue.use(VueI18n)
@@ -30,7 +30,7 @@ var windowLocation = location.hostname
 
 new Vue({
     el: '#app',
-    i18n,
+    i18n: i18n,
     mounted: function () {
         this.setLanguage()
     },
