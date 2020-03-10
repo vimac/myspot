@@ -6,6 +6,10 @@ body {
     margin: 0;
 }
 
+img {
+    image-rendering: pixelated;
+}
+
 pre {
     font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
     background: #2C2F38;
