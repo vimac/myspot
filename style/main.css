@@ -102,11 +102,15 @@ pre {
 
 .main-container a {
     text-decoration: none;
-    color: #1b2552;
+    color: #0089F7;
 }
 
 .main-container a:visited {
-    color: #1b2552;
+    color: #0089F7;
+}
+
+.main-container a:hover {
+    border-bottom: 1px solid #ccc;
 }
 
 .main-container h2 {
@@ -175,20 +179,6 @@ pre {
 .el-carousel__item img {
     max-width: 100%;
     max-height: 100%;
-}
-
-.download-container {
-    display: flex;
-}
-
-.download-container a {
-    display: block;
-    font-size: 48px;
-    margin-right: 20px;
-}
-
-.download-container a:hover {
-    color: #0e5179;
 }
 
 .cnzzText {
