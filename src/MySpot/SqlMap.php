@@ -221,7 +221,11 @@ class SqlMap
         $this->validatePdoStatementAvailable($stmt, $sql);
 
         foreach ($params as $k => $v) {
-            $stmt->bindValue($k, ...$v);
+            if (is_array($v)) {
+                $stmt->bindValue($k, ...$v);
+            } else {
+                $stmt->bindValue($k, $v);
+            }
         }
 
         $result = $stmt->execute();

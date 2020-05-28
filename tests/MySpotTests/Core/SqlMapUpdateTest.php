@@ -27,6 +27,13 @@ class SqlMapUpdateTest extends SqlMapAbstractTest
         );
 
         $this->assertEquals(8, $result->getAffectedLines());
+
+        $result = $sqlMap->update('config.update.update_all', [], [
+                'deleted_at' => $date
+            ]
+        );
+
+        $this->assertEquals(8, $result->getAffectedLines());
     }
 
     /**
